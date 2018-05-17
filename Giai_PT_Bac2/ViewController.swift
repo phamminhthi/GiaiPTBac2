@@ -37,25 +37,43 @@ class ViewController: UIViewController, UITextFieldDelegate {
        
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
     {
-        let aSet = NSCharacterSet(charactersIn: "0123456789.").inverted
+        let aSet = NSCharacterSet(charactersIn: "0123456789.-").inverted
+        let cursor=range.location
         let compSepByCharInSet = string.components(separatedBy: aSet)
+        if ((textField.text?.contains("."))! && compSepByCharInSet[0] == ".") ||
+        ((textField.text?.contains("-"))! && compSepByCharInSet[0] == "-") ||
+        (cursor==0 && compSepByCharInSet[0] == ".") || (cursor != 0 && compSepByCharInSet[0] == "-")
+        {
+            
+            return false
+            
+        }
         let numberFiltered = compSepByCharInSet.joined(separator: "")
         return string == numberFiltered
+
+
     }
     
     //Giải PT
     @IBAction func btnGiai(_ sender: Any) {
         lblResult2.text = ""
         lblResult1.isHidden = false
-        if(txta.text! == "" || txtb.text! == "" || txtc.text! == "")
-        {
-            lblResult1.text = "Hãy nhập đủ giá trị cho a,b,c"
+        var a:Double=0
+        var b:Double=0
+        var c:Double=0
+        
+        if txta.text != ""{
+            a = Double(txta.text!)!
+        
         }
-        else
-        {
-            let a:Double = Double(txta.text!)!
-            let b:Double = Double(txtb.text!)!
-            let c:Double = Double(txtc.text!)!
+        if txtb.text != ""{
+            b = Double(txtb.text!)!
+            
+        }
+        if txtc.text != ""{
+            c = Double(txtc.text!)!
+            
+        }
             if(a==0)
             {
                 if(b==0)
@@ -76,8 +94,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
                         lblResult1.text = "Phương trình có nghiệm x = 0"
                     }
                     else
-                    {
-                        lblResult1.text = "Phương trình có nghiệm x = \(-c/b)"
+                    {   let x = -c/b
+                        let kq = Double(round(10000*x)/10000)
+                        lblResult1.text = "Phương trình có nghiệm x = \(kq)"
                     }
                 }
             }
@@ -98,14 +117,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
                     {
                         if(delta==0)
                         {
-                            lblResult1.text = "x1 = x2 = \(-b/(2*a))" //PT có nghiệm kép
+                            let n = -b/(2*a)
+                            let kq = Double(round(10000*n)/10000)
+                            lblResult1.text = "x1 = x2 = \(kq)" //PT có nghiệm kép
                         }
                         else
                         {
                             lblResult2.isHidden = false
                             //PT có 2 nghiệm phân biệt
-                            let x1 = (-b+sqrt(delta))/(2*a)
-                            let x2 = (-b-sqrt(delta))/(2*a)
+                            let n1 = ((-b+sqrt(delta))/(2*a)*10000)/10000
+                            let n2 = ((-b-sqrt(delta))/(2*a)*10000)/10000
+                            let x1 = Double(round(10000*n1)/10000)
+                            let x2 = Double(round(10000*n2)/10000)
                             lblResult1.text = "x1 = \(x1)"
                             lblResult2.text = "x2 = \(x2)"
                             
@@ -114,7 +137,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 }
             }
             
-        }
+        
     }
 }
 
